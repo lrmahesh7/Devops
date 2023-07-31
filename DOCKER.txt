@@ -1,0 +1,392 @@
+Day-1 what is Docker?
+Docker:
+what is docker and why we need docker ?
+Application development :
+collection of programes is called s/w project.
+s/w contains several components:
+    frontend components
+	backend components
+    database components 
+In order to setup application in cluster we need to set up all environment which is reqired by the application
+to run.
+example: OS,java1.8 ,musql DB,tomcat server.....
+In realtime project should be deployed in different  environment to test .
+Ex: DEV,SIT(SYSTEM INTEGRATION TEST),UAT(USER ACCEPTENCE TEST),
+PILOT(PREPROD TESTING),PROD(LIVE ENV)
+
+Deploying the application in several envs as we have to set up all compatible s/w.
+it will be problem and it is difficult.
+
+Docker will prepare the environment.
+Docker will setup all the s/w in container to run the application.
+
+Before docker by using virtual machines we are going to install os and deploy applications.
+but here problem is we have to install one OS per Application.it will led's to performace degard.
+we can't deploy more applications using VM.
+people are not going for virtualzation instead using containerzation.
+
+Virtualization:
+   ===>installing multipule Guest operating systems inside one Operating system.
+   ===>Hypervisior will use to achive this.
+   ===>we need to install all the required s/w in HOST OS to run our application.
+   ===>it is old technology.
+   ===>system performace will degard.
+Containerzation:
+To overcome the problem of Virtualization we are going for containerzation.
+   ===> it is used to package all the s/w and application code in one container for exucation.
+   ===> container will take care of everything which will required for our application.
+   ===> we can run application in multipule machines easily.
+   ===> Docker 	is a containerzation software.
+   ===> Docker container is easily shippable.
+   ===> using docker images  we can create docker container and execute it.
+
+Day-2
+
+Docker is a platform for packaging,deploying and running application.
+Docker enable you to seperate your application from your infrastrucute so you can deliver quickly.
+Docker packages software into standardized units called containers that have everything software needs to run
+including librareis ,system toolds,code and runtime.
+
+docker commands:
+docker -v
+docker info
+docker login 
+docker help
+docker images
+docker pull <imageid>
+docker run <imageid>
+docker build <Dockerfile -t registry/repo:tag>
+docker tag <registry/repo:tag  registry/repo:tag>
+docker push <registry/repo:tag>
+docker rmi <image-id>
+docker run -it --entrypoint="/bin/sh" <imageid> -->to go inside image
+docker exec -it <container-id> sh ---> to go inside container.
+
+Day-3:
+Docker terminalogy
+-------------------
+Docker File: contains instructions to create an image . it contains docker domain specific keywords to build image.
+Docker Image:Docker image is a package it contains everything(Appcode +software+ env+librareis)
+Docker container:docker container is a runtime environment of docker image.
+Docker Registry(Docker hub): is palce where we have to place images.
+Docker engin: is a s/w to using which we will create docker image and docker container.
+
+there are two types of DOcker registries:
+ public: dockerhub is public registry everybody can registy 
+ privat: nexis ,jfrog,dtr,AWS ecr 
+ 
+ ==>"sudo service docker start" to start the docker.
+
+
+Docker client ===>docker demon(docker engin)
+docker demon pulled image 
+docker demon created new contianer of image.
+docker demon sends out to the docker client .
+
+Day-4:
+------
++++++++++++
+DOCKERFILE:+
++++++++++++
+==>Dockerfile contains instructions to build docker image
+==>In dockerfile we use DSL(Domain Specific Langauge) keywords.
+==>Docker engin will process DockerFile instructions from top to bottom.
+
+Keywords:
+---------
+++++++
+FROM :
+++++++
+Docker file starts with FROM keyword to get base image for our application.on top of this image 
+we will create our own image.
+we can have more than one base image.
+Sytax: FROM <image-name>:<image-tag>
++++++++++++
+MAINTAINER: 
++++++++++++
+who is author of DockerFile.
+example: MAINTAINER mahesh
+++++
+ENV: 
+++++
+==> Is used to set ENVIRONMENT variable.
+example:
+ENV <KEY><VALUE>
+++++
+COPY:
++++++
+ it is used to copy of files from local to image ,or in image as well.
+Sytax: COPY <source> <destination>
+++++
+ADD:
+++++
+is used to copy file to image while creating an image same as COPY.
+what is the differnce b/w ADD and COPY
+ADD 
+==>can download files from REMOTE location. 
+==>it excrate tar file while copying automatically.
+sytanx:
+ADD <source><destination>
+ADD<url-to-download><destination>
++++
+RUN:
++++
+==> it is used to execute commands on top of base image. 
+==> RUN command instruction will excute while creating an image.
+==> we can have multipule RUN commands and it will run in order,but it will create one layer for one RUN.
+example: 
+RUN  mkdir foldername
++++
+CMD: 
++++
+==>CMD is also used to execute commands .
+==>CMD will execute commands while creating container.
+==>we can have multipule CMD commands ,but docker will execute last CMD command while creating container.
+Note:there is no use of having multipule CMD commands.
+==>CMD instructions can overwrite by passing through argument.
+example: docker run <imagename> <argument>
+++++++++++
+ENTRYPOINT:
+++++++++++
+==> ENTRYPOINT also run while creating container.
+==> we cannot overwrite ENTRYPOINT instructions 
++++++
+LABEL:
++++++
+==>id used to add metadata to our image
+==>represent data in key value pair
+Example: LABLE branchName release
+USER
++++++++
+WORKDIR: 
++++++++
+==> used to set working dir of container.
+==>the instructions which are aviable after WORKDIR those instructions will process in the given working directry.
+++++
+ARG:
+++++
+==>it is used to avoid hard coded value in the docker file. we can pass arguments in the runtime.
+==> we can pass while building as well
+Ex: 
+ARG branch=develop
+LABEL branch $branch
+docker build -t imageone --build-arg branch=feature
+
+++++
+USER:
+++++
+==> we can set user for image or container.
+==>After USER instruction ,remaining instructions will be processed  with given user.
+++++++
+EXPOSE:
+++++++
+==> It represent in which port our container is running or open  to access.
+==>It is used to say in which port our application will run,even though if you are not metion it will 
+run on that port ,it's just for documention or user understand.
+++++++
+VOLUME:
+++++++ 
+==> is used to data storage and used to mount the data.
+==>if you want to store data permanently we use VOLUME
+
+---------------------------------------------------------
+can we use othername for dockerfile other than Dockerfile?
+---------------------------------------------------------
+yes we can build image with other file as well. you have to give file name to docker build command
+docker build -f <filename> -t <repo>:<tag>
+
+
+Day-5:
+------
+For normal java application if you deployed using war file then that can be accessed 
+by context path.
+
+ex: http://ec2-public-ip:port/war-file-name
+
+COPY .. ==>COPY file from current working dir in local to current working dir in image.	
+
+docker system prune -a 
+is used to remove all stopped containers 
+is used to remove all images which is not used by any container.
+is used to remove cache data.
+
+docker container commands:
+docker ps : to get running containers
+docker ps -a : to get all  containers
+docker stop <container id> : to stop runnings docker container
+docker rm <container-id> : to remove container
+
++++++++++++
+Docker Volume:
++++++++++++
+==>It is used for storage purpose.
+==>it is used to persist the data generated by containers.
+==>storing the data in the host machine .
+==>decouple the storage from docker container.
+==>we can share the volume with multipule contianers.
+==>on deletion of container docker volumes will not delete.
+
+commands:
+docker volume --help 
+docker voulme <volume name>
+docker volume ls 
+docker volume inspect <volume name>
+docker volume rm <volume name>
+docker volume prune -->remove unused volume 
+Named Volume:
+--------------
+docker volume create new_vol
+docker pull nginx
+docker run -d --name=webapp  --mount source=new_vol,destination=/usr/share/nginx/html  -p 80:80 nginx
+Day-6:
+-----
+Bined Volume: Host Directory mouting to contianer
+-------------
+create one folder in host server then binded that to container.
+docker run -d --name webapp2 -p 80:80 -v <pathinhost>:<pathinimage> nginx
+
+stateless container: will loose data once container stops,by default all container all stateless contianer.
+statefull continer: will not loose data even container stops.
+
+docker-compose:
+==>In RealWorld applications are getting developed by MicroService  Architecture.
+==> In Microservice architecture several API's will be avilabe.
+==> Running  multipule containers manually for all api's is difficlut.
+==> to slove this we use docker-compse
+==> is used to manage multicontainer based application.
+==>using docker-compose we can define and deploy multicontianer based applications.
+==>we will provide YAML files to docker compose as input to run multipule contianers.
+==>Docker compose YML file should have information related to all services.
+
+sample docker-compose.yaml
+---------------------------
+version:
+service:
+network:
+volumes:
+
+==>Docker compose filename : docker-compose.yaml 
+#create and start the container
+docker-compose up
+#stop and remove docker-compose
+docker-compose down
+#list the docker-compose 
+docker-compose ls 
+#list down the running container image
+docker-compose images
+#using different file 
+docker-compose -f <filename> up/down
+
+Day-7
+---
+Docker Network:
+--------------
+Networking is abount communication amaong the process .
+Docker Networking enables a user  to link a docker container to as many network as they require.
+Docker network is used to provide complete isolation for docker containers.
+
+Advanatage of Networking:
+-------------------------
+==>They share single operating system and  maintains containers isolated manner.
+==>It require fewver OS instances to run the workload.
+==> it helps to fast delivery of the softwares.
+==>it helps in application portability.
+when docker installed in a machine by default three docker networks will be configured.
+1)none
+2)host
+3)bridge
+
+Note: one container we can attach to multipule networks.
+==>when container attached to multipule networks then those containers can communicate.
+==>Docker provide networking to container using Network Drivers.
+Drivers:
+  bridge
+  none
+  host
+  overlay
+  macvaln
+
+Bridge: this is default network driver created on the docker host machine.
+==>it is very useful when application running in standalone container.
+==> we can more details of network using "inspect" command
+  docker network inspect bridge
+  
+Host Driver: It is useful when standalone containers are avaible 
+==> the container will not get any IP address when we enable host driver.
+Note: For example a container is executed that binds to 80 port with Host Network Driver . in this case we no need
+to map container port to host machine port.
+
+==>this is usefull when we are running our container with larg  number of ports.
+
+None Driver:
+----------
+==> In this type of network , the contianers will no access to network 
+
+Overlay:
+----------
+==> we will use docker swarm to orchestrate our docker containers.
+==> overlay driver will be used used when  we have docker swarm cluster.
+
+Macvlan:
+------
+==> this network driver will assign a mac address to a container.
+==> MAC address will make our divce as physica.
+==> using this MAC address docker engine routs  the traffic to particuler route.
+==> macvaln driver simplifies communication b/w containers.
+
+working with docker network commands:
+=====================================
+#to list the docker networks
+docker network ls
+# running docker container with defaulte netwok
+docker run --name nginx -d -p 80:80 nginx
+#to check the details of container.
+docker inspect nginx
+
+#create our own bridge 	network
+docker network create --driver bridge my_bridge
+Note: if we don't sepcify by default it will take bridge driver.
+
+#run the docker container using custom network 
+docker run --name nginx100 -d --network my-network -p 8070:80 nginx
+
+how to get ip of container?
+docker inspect   -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx30
+
+
+apt-get udpdate
+apt-get install iputils-ping
+
+ping ipaddress 
+
+#host driver example 
+docker run --name nginx33 -d  --network host nginx
+#if we observe we are not port mapping nginx container here because we are using host drivers
+------------------------
+Day-8
+-----
+Docker-Swarm:
+==> is an orchestrate tools provided by docker
+==> orchestrate is managing the process.
+==>docker swarm is used to setup Docker cluster
+==> docker swarm is embedded with docker engin.
+==>cluster means group of servers.
+==>we will setup master and worker nodes using docker swarm
+==>Master will schedule the tasks(container)and manage nodes and node failures.
+==>worker node will perfrom the action (container will run here).
+
+
+orchestrate tools:
+Docker swa rm
+kubernetes
+open-shift
+
+
+What is Docker swarm manger quarm?
+if we run with one master then we can't give guarentee High Avilbilty of the application.
+Formula: (n-1)/2
+if we take two master nodes 
+2-1/2=0.5 (it can't be master)
+3-1/2=1 (it can be leader when the main leader is down)
+Note :Always use odd number for Master machines
+
